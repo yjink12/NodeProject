@@ -1,0 +1,10 @@
+{
+    "development" : {
+        "username" : "root",
+        "password" : "yjkim121812#",
+        "database" : "task",
+        "host" : "localhost",
+        "dialect" : "mysql",
+        "operatorAliases" : false
+    }
+}

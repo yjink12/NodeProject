@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test2</title>
+</head>
+<body>
+    <h2>Login</h2>
+    <form method="get" action="">
+        <label for="member_id">ID : </label>
+        <input type="text" id="member_id" name="member_id" 
+            placeholder="아이디를 입력해주세요" required autofocus oninvalid="this.setCustomValidity('아이디는 8자 이내로 입력')"><br>
+        <label for="member_pw">PW : </label>
+        <input type="text" id="member_pw" name="member_pw"
+            placeholder="비밀번호를 입력해주세요" required autofocus oninvalid="this.setCustomValidity('비밀번호 입력해주세요')"><br>
+        <input type="submit" value="로그인">
+    </form>
+</body>
+</html>
