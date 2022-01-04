@@ -23,17 +23,24 @@ sequelize.sync({force: false})
         });
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views')); //view 화면파일 폴더 지정
+app.set('view engine', 'ejs'); //pug 보다는 ejs
 
 app.use(logger('dev'));
+//response 와 관련된 parser
 app.use(express.json());
+//추후에 payload 사이즈에 따라, 옵션 지정 가능
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+//정적인 소스들 경로 public으로 기본지정
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+//안씀
+// app.use('/', indexRouter);
+// app.use('/users', usersRouter);
+
+//라우팅
+require('./routes/index')(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

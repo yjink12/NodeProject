@@ -4,18 +4,20 @@
     2. db 객체에 넣어줌
     models/index.js 로 sequelize 와 user 에 접근 가능
 */
-let path = require('path');
-let Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
+const con = require('../config').database;
+// let env = process.env.NODE_ENV || 'development';
+// let config = require(path.join(__dirname+'../../config/config.json'))[env];
 
-let env = process.env.NODE_ENV || 'development';
-let config = require(path.join(__dirname+'../../config/config.json'))[env];
+
+
 let db = {};
 
-let sequelize = new Sequelize(config.database, config.username, config.password, config);
+//connection
+let connection = new Sequelize(con.database, con.username, con.password, con);
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+db.Sequelize = connection;
 
-db.Member = require('./member')(sequelize, Sequelize);
+//db.Member = require('./member')(sequelize, Sequelize);
 
 module.exports = db;
