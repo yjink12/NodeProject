@@ -16,7 +16,23 @@ let db = {};
 //connection
 let connection = new Sequelize(con.database, con.username, con.password, con);
 
-db.Sequelize = connection;
+//Model 등록 => 폴더 내의 model 파일들 db에 자동등록 스크립트
+fs.readdirSync(__dirname).filter(function(file){
+    return (file.indexOf('.') !== 0) && (file !== baseName); //.으로 구분 후 파일 비교
+}).forEach(function(file) {     //목록 가져오고
+    var model = connection['import'](path.join(__dirname, file)) //커넥션에서 import 시키고
+    db[model.name]  //db에 쌓기
+});
+
+//association => model 간의 관계 지정시 일괄적으로 연결
+Object.keys(db).forEach(function (modelName) {   
+    console.log(modelName); 
+    if (db[modelName].associate) {
+      db[modelName].associate(db);
+    } 
+});
+
+db.sequelize = connection;
 
 //db.Member = require('./member')(sequelize, Sequelize);
 
