@@ -1,15 +1,20 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 /* Sequelize 객체 만들기, db 연결 */
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+// var indexRouter = require('./routes/index');
+// var usersRouter = require('./routes/users');
 
 /* sequelize 객체 */
 const sequelize = require('./models').sequelize;
+
+/* passport */
+const passport = require('passport');
+const passportConfig = require('./passport');
 
 var app = express();
 
@@ -35,6 +40,27 @@ app.use(cookieParser());
 //정적인 소스들 경로 public으로 기본지정
 app.use(express.static(path.join(__dirname, 'public')));
 
+//세션 정의(passport)
+//express-session
+app.use(session({
+  secret: '#abcdeffff$',
+  resave: false,
+  rolling: true,
+  saveUninitialized: true,
+  cookie: {    
+    maxAge: 1000 * 60 * 60, //1시간
+    httpOnly: true
+  }
+}));
+
+/* passport session 기능 사용*/
+app.use(passport.initialize());
+/* req.session 객체에 passport 정보 저장 */
+app.use(passport.session());
+
+/* passport config 지정한 부분에 passport 주입 */
+passportConfig(passport);
+
 //안씀
 // app.use('/', indexRouter);
 // app.use('/users', usersRouter);
@@ -56,22 +82,6 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
-});
-
-app.get("/login", (req, res)=>{
-  res.render("login", {});
-});
-
-// app.get("/test", (req, res)=>{
-//     res.render("test1", { list : rows });
-// });
-
-/*
-http server
-listen(port, function())
-*/
-app.listen(3000, () =>{
-  console.log("server running....");
 });
 
 module.exports = app;
