@@ -11,10 +11,9 @@ module.exports = (passport) => {
     //session 이 passport 인증 통과시
     //serializeUser : req.session 객체에 어떤 데이터 저장할지 선택
     //                 사용자 정보 객체 세션에 아이디로 저장
-    passport.serializeUser((user, done)=>{
-        console.log('serialize session');
-        // null -> error 발생시 사용
-        done(null, user.id);
+    passport.serializeUser( (user, done) => {
+        console.log('serialize session');         
+        done(null, user.member_id);
     });
 
     //deserializeUser : 요청시 실행됨, 
@@ -30,20 +29,23 @@ module.exports = (passport) => {
 
     //local 전략 정의
     //serialize 는 session 이나 token 모두 동일
-    passport.use('local', new LocalStrategy({
+    passport.use('local', new LocalStrategy({ 
         usernameField : 'email',
         passwordField : 'password',
         session : true
     }, async (email, password, done) => {
-
-        //DB
-        let user = await models.memeber.findOne({
+        console.log(email);
+        console.log(password);
+        //DB 회원 정보 확인
+        
+        let user = await models.member.findOne({
             where: {member_id: email, member_pw: password}
         });
-
+        
         if(!user){
             return done(null, false, {message: '이메일, 비밀번호 확인!'});
         }else {
+            user = user.get({plain: true});
             return done(null, user);
         }
     }));

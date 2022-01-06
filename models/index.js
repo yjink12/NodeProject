@@ -34,7 +34,7 @@ Object.keys(db).forEach(function (modelName) {
     } 
 });
 
-console.log(db);
+console.log(db); 
 
 db.sequelize = connection;
 

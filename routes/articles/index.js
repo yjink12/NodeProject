@@ -10,10 +10,10 @@ const auth = require('../../passport/auth');
 // 3. 웹표준을 지원하는 admin template을 사용시
 // 4. 별도로 url 지정 안해줘도 알아서 갔다 붙어요.
 
-router.get('/', auth.isAuthenticated, service.index);
-//router.post('/add', service.create);
-router.get('/:id', service.show);
-router.patch('/:id', service.update);
-router.delete('/:id', service.destroy);
-
+// router.get('/', auth.isAuthenticated, service.index);
+// router.post('/', service.create);
+// router.get('/:id', service.show);
+// router.patch('/:id', service.update);
+// router.delete('/:id', service.destroy);
+ 
 module.exports = router;
