@@ -17,36 +17,36 @@
     <form action="/login/join" method="post">
         <li>
             <label for="email">이메일</label><br>
-            <input type="email" id="email" name="email">
+            <input type="email" id="email" name="email" required>
             <input type="button" value="중복확인" onclick="idCheck()">
         </li>
         <li>
             <label for="password">비밀번호</label><br>
-            <input type="password" id="password" name="password">
+            <input type="password" id="password" name="password" required>
         </li>
         <li>
             <input type="submit" value="회원가입">
         </li>
     </form>
     <script>
-        function idCheck(){
-            let email = $("#email").val();
-            console.log(email);
+        // function idCheck(){
+        //     let email = $("#email").val();
+        //     console.log(email);
 
-            $.ajax({
-                url: '/login/join',
-                type: 'post',
-                data: {
-                    email : email
-                },
-                success: function(data){
-                    alert('success'+data);
-                }, 
-                error : function (err) {
-                    console.log(err);
-                }
-            });
-        }
+        //     $.ajax({
+        //         url: '/login/join',
+        //         type: 'post',
+        //         data: {
+        //             email : email
+        //         },
+        //         success: function(data){
+        //             alert('success'+data);
+        //         }, 
+        //         error : function (err) {
+        //             console.log(err);
+        //         }
+        //     });
+        // }
     </script>
 </body>
 </html>

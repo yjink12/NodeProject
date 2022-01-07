@@ -5,6 +5,8 @@ module.exports = (app) => {
 
   app.use('/login', require('./login'));
 
+  app.use('/reserve', require('./reserve'));
+
   app.use('/articles', require('./articles'));
 
   app.use('/', auth.isAuthenticatedPage, (req, res) => {

@@ -19,7 +19,7 @@ const passportConfig = require('./passport');
 var app = express();
 
 /*db connect */
-sequelize.sync({force: false})
+sequelize.sync({alter: true})
         .then(()=>{
             console.log('db success');
         })

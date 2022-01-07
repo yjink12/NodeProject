@@ -21,7 +21,7 @@ module.exports = (passport) => {
     // serializeUser 에서 id 받아서 db 사용자 정보 조회
     passport.deserializeUser( async (id, done) => {
         console.log('deserialize session');
-        let user = await models.member.findOne({
+        let user = await models.y_member.findOne({
             where : {member_id : id}
         });
         done(null, user);
@@ -38,7 +38,7 @@ module.exports = (passport) => {
         console.log(password);
         //DB 회원 정보 확인
         
-        let user = await models.member.findOne({
+        let user = await models.y_member.findOne({
             where: {member_id: email, member_pw: password}
         });
         

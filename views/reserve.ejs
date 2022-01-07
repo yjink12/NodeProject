@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reserve</title>
+    <style>
+        li {
+            list-style: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- <h4>회의실 예약</h4> -->
+    <h4><%= title%></h4>
+    <form method="post" action="/reserve/add">
+    <ul>
+        <input type="hidden" name="email" id="email" value="<%= id%>">
+        <li>
+            <label>회의실</label>
+            <select name="room">
+                <% list.forEach(function(data){ %>
+                    <option value="<%=data.room_no%>"><%= data.room_name%></option>
+                <% }) %>
+            </select>
+        </li>
+        <li>
+            <label>인원</label>
+            <input type="number" name="person_num" id="person_num" min="1" required>
+        </li>
+        <li>
+            <label>예약날짜</label>
+            <input type="date" name="reserve_date" id="reserve_date" required>
+        </li>
+        <li>
+            <label>시작시간</label>
+            <input type="time" name="start_time" id="start_time" required>
+        </li>
+        <li>
+            <label>종료시간</label>
+            <input type="time" name="end_time" id="end_time" required>
+        </li>
+        <li>
+            <input type="submit" value="예약하기">
+            <input type="reset" value="취소">
+        </li>
+    </ul>
+    </form>
+</body>
+</html>
