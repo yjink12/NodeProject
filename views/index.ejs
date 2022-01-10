@@ -1,17 +1,151 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <script src="node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="node_modules/moment/min/moment-with-locales.min.js"></script>
+  <script src="node_modules/jquery-touchswipe/jquery.touchSwipe.min.js"></script>
+  <script src="node_modules/arrobefr-jquery-calendar-bs4/dist/js/jquery-calendar.min.js"></script>
+  <link rel="stylesheet" href="node_modules/arrobefr-jquery-calendar-bs4/dist/css/jquery-calendar.min.css">
+  <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free-webfonts/css/fontawesome.css">
+  <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free-webfonts/css/fa-solid.css">
+  <!-- <title>Calendar</title> -->
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
     <button id="logout" onclick="location.href='/login/out'">로그아웃</button>
     <button id="reserve" onclick="location.href='/reserve'">회의실 예약하기</button>
-    /*캘린더*/
-    
+    <script>
+      $(document).ready(function(){
+        moment.locale('ko');
+        
+        var now = moment();
+  
+        $.ajax({
+          url: '/reserve/calendar',
+          type : 'get',
+          success: function(res){
+           // console.log(res.data);
+            let rev = [];
+            $.each(res.data, async function(index, d){              
+              let date = await moment(d.reserve_date).format('YYYY-MM-DD');              
+              let start = await  (moment(date+'T'+d.start_time).format());
+              let end = await  (moment(date+'T'+d.end_time).format());
+              let room_no = await d.room_no;
+              let person = await d.person_num;
+              let member_id = await d.member_id;
 
+              await rev.push({
+                start: moment(start).unix(), 
+                end: moment(end).unix(),
+                title: index+1,
+                content: '<p>예약자: '+member_id+'</p>'+'<p>인원: '+ person +'</p>'+'<p>회의실: '+ room_no +'</p>',
+                category: member_id
+              });
+            });
+            console.log(rev);
+            drawCalendar(rev);
+          
+          }, 
+          error : function (err) {
+            console.log(err);
+          }
+        });
+  
+        /**
+         * A daynote
+         */
+        // var daynotes = [
+        //   {
+        //     time: now.startOf('week').add(3, 'days').add(10, 'h').add(30, 'm').format('X'),
+        //     title: 'Leo\'s holiday',
+        //     content: 'yohohohhohohohohhoo',
+        //     category: 'holiday-yo'
+        //   },
+        //   {
+        //     time: now.startOf('week').add(5, 'days').add(11, 'h').add(30, 'm').format('X'),
+        //     title: 'yj\'s holiday',
+        //     content: 'yhohoooooooohooo',
+        //     category: 'holiday-yj'
+        //   },
+        // ];
+  
+        
 
+        function drawCalendar(data){
+          var calendar = $('#calendar').Calendar({
+              locale: 'ko',
+              weekday: {
+                /*시간*/
+                timeline: {
+                  intervalMinutes: 30,
+                  fromHour: 9,
+                  toHour: 18,
+                  autoResize: true,
+                },
+                dayline : {
+                  format : "dddd MM/DD",
+                  month : {
+                    format : "YYYY MMMM",
+                  }
+                },
+              },
+              events: data,
+            // daynotes: daynotes,
+            }).init();
+
+            $('#calendar').on('Calendar.init', function(event, instance, before, current, after){
+          console.log('event : Calendar.init');
+          console.log(instance);
+          console.log(before);
+          console.log(current);
+          console.log(after);
+        });
+        $('#calendar').on('Calendar.daynote-mouseenter', function(event, instance, elem){
+          console.log('event : Calendar.daynote-mouseenter');
+          console.log(instance);
+          console.log(elem);
+        });
+        $('#calendar').on('Calendar.daynote-mouseleave', function(event, instance, elem){
+          console.log('event : Calendar.daynote-mouseleave');
+          console.log(instance);
+          console.log(elem);
+        });
+        $('#calendar').on('Calendar.event-mouseenter', function(event, instance, elem){
+          console.log('event : Calendar.event-mouseenter');
+          console.log(instance);
+          console.log(elem);
+        });
+        $('#calendar').on('Calendar.event-mouseleave', function(event, instance, elem){
+          console.log('event : Calendar.event-mouseleave');
+          console.log(instance);
+          console.log(elem);
+        });
+        $('#calendar').on('Calendar.daynote-click', function(event, instance, elem, evt){
+          console.log('event : Calendar.daynote-click');
+          console.log(instance);
+          console.log(elem);
+          console.log(evt);
+        });
+        $('#calendar').on('Calendar.event-click', function(event, instance, elem, evt){
+          console.log('event : Calendar.event-click');
+          console.log(instance);
+          console.log(elem);
+          console.log(evt);
+        });
+        }
+      });
+    </script>
+    <div class="container-fluid px-4">
+      <div class="row">
+        <div class="col-xs-12">
+          <a href="/"><h1>Calendar</h1></a>
+          <div id="calendar"></div>
+        </div>
+      </div>
+    </div>
   </body>
-</html>
+  </html>

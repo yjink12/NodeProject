@@ -38,7 +38,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 //정적인 소스들 경로 public으로 기본지정
+
 app.use(express.static(path.join(__dirname, 'public')));
+
+//js css 파일 경로 잡아주기
+app.use('/node_modules', express.static(path.join(__dirname, '/node_modules')));
+app.use('/dist', express.static(path.join(__dirname, '/dist')));
 
 //세션 정의(passport)
 //express-session

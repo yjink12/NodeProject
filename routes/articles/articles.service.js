@@ -68,7 +68,7 @@ exports.showInfo = async (req, res) => {
         console.log(req.user.member_id);
         let rows = await models.y_room.findAll();
         
-        res.render('reserve', {list: rows, title: 'RRRRRRR', id: req.user.member_id});
+        res.render('reserve', {list: rows, title: '예약', id: req.user.member_id});
         //res.status(200).json({result: 'success', data: rows, title: 'RRRRRRR'});
     }catch(err){
         res.status(500).json({result: false, message: "fail"})
@@ -77,21 +77,53 @@ exports.showInfo = async (req, res) => {
 
 exports.reserveRoom = async (req, res) => {
     try{
-        console.log(req.body);
-        let rows = await models.y_reserve.create({
-            member_id : req.body.email,
-            room_no : req.body.room,
-            person_num : req.body.person_num,
-            reserve_date : req.body.reserve_date,
-            start_time : req.body.start_time,
-            end_time : req.body.end_time
+        console.log(req.body.reserve_date);
+        //예약 정보가 있는지 확인
+        let check = await models.y_reserve.findOne({
+            where : {
+                member_id : req.body.member_id,
+                room_no : req.body.room_no,
+                reserve_date : req.body.reserve_date,
+                start_time : req.body.start_time,
+                end_time : req.body.end_time,        
+            }
         });
-        
-        res.status(200).json({result: 'success', data: rows});
 
-        //res.render('reserve', {list: rows, title: 'RRRRRRR', id: req.user.member_id});
-        //res.status(200).json({result: 'success', data: rows, title: 'RRRRRRR'});
+        console.log('null-check=======>'+check);
+        if(null == check){
+            let rows = await models.y_reserve.create({
+                member_id : req.body.member_id,
+                room_no : req.body.room_no,
+                person_num : req.body.person_num,
+                reserve_date : req.body.reserve_date,
+                start_time : req.body.start_time,
+                end_time : req.body.end_time
+            });
+
+            res.status(200).json({result: 'success', data: rows});
+        }else{
+            res.status(500).json({result: false, message: "fail"})
+        }
+
     }catch(err){
         res.status(500).json({result: false, message: "fail"})
     }
+}
+
+exports.showReserveInfo = async (req, res) => {
+    try{
+        //console.log(req.user.member_id);
+        let rows = await models.y_reserve.findAll();
+        
+        res.status(200).json({result: 'success', data: rows});
+    }catch(err){
+        res.status(500).json({result: false, message: "fail"})
+    }
+}
+
+exports.delReserve = async (req, res) => {
+    let rows = await models.y_reserve.destroy({
+        where: {member_id : req.params.id}
+    });
+    res.status(200).json({result: 'success', data: rows});
 }
