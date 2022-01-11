@@ -19,65 +19,14 @@
     <button id="logout" onclick="location.href='/login/out'">로그아웃</button>
     <button id="reserve" onclick="location.href='/reserve'">회의실 예약하기</button>
     <script>
-      $(document).ready(function(){
-        moment.locale('ko');
-        
-        var now = moment();
-  
-        $.ajax({
-          url: '/reserve/calendar',
-          type : 'get',
-          success: function(res){
-           // console.log(res.data);
-            let rev = [];
-            $.each(res.data, async function(index, d){              
-              let date = await moment(d.reserve_date).format('YYYY-MM-DD');              
-              let start = await  (moment(date+'T'+d.start_time).format());
-              let end = await  (moment(date+'T'+d.end_time).format());
-              let room_no = await d.room_no;
-              let person = await d.person_num;
-              let member_id = await d.member_id;
-
-              await rev.push({
-                start: moment(start).unix(), 
-                end: moment(end).unix(),
-                title: index+1,
-                content: '<p>예약자: '+member_id+'</p>'+'<p>인원: '+ person +'</p>'+'<p>회의실: '+ room_no +'</p>',
-                category: member_id
-              });
-            });
-            console.log(rev);
-            drawCalendar(rev);
-          
-          }, 
-          error : function (err) {
-            console.log(err);
-          }
-        });
-  
-        /**
-         * A daynote
-         */
-        // var daynotes = [
-        //   {
-        //     time: now.startOf('week').add(3, 'days').add(10, 'h').add(30, 'm').format('X'),
-        //     title: 'Leo\'s holiday',
-        //     content: 'yohohohhohohohohhoo',
-        //     category: 'holiday-yo'
-        //   },
-        //   {
-        //     time: now.startOf('week').add(5, 'days').add(11, 'h').add(30, 'm').format('X'),
-        //     title: 'yj\'s holiday',
-        //     content: 'yhohoooooooohooo',
-        //     category: 'holiday-yj'
-        //   },
-        // ];
-  
-        
-
-        function drawCalendar(data){
+      function drawCalendar(data){
+          console.log('캘린더 불러오기 Calendar init');
           var calendar = $('#calendar').Calendar({
               locale: 'ko',
+              defaultView : {
+                largeScreen : 'month',
+                smallScreen : 'month',
+              },
               weekday: {
                 /*시간*/
                 timeline: {
@@ -90,53 +39,66 @@
                   format : "dddd MM/DD",
                   month : {
                     format : "YYYY MMMM",
+                    heightPx : 50,
                   }
                 },
               },
               events: data,
             // daynotes: daynotes,
             }).init();
+          }
 
-            $('#calendar').on('Calendar.init', function(event, instance, before, current, after){
-          console.log('event : Calendar.init');
-          console.log(instance);
-          console.log(before);
-          console.log(current);
-          console.log(after);
+      $(document).ready(function(){
+        moment.locale('ko');
+        var now = moment();
+        /*예약 정보 받아오기 ajax*/
+        $.ajax({
+          url: '/reserve/calendar',
+          type : 'get',          
+          success: async function(res){ //async response           
+            let rev = [];
+
+            //async function: loop async function
+            async function callAPI(data){
+              console.log(data);
+              for(d of data){
+                await setData(d);
+              }
+            }
+
+            //async function: setting data
+            async function setData(d){
+              let date = await moment(d.reserve_date).format('YYYY-MM-DD');              
+              let start = await (moment(date+'T'+d.start_time).format());
+              let end = await (moment(date+'T'+d.end_time).format());
+              let room_no = d.room_no;
+              let person = d.person_num;
+              let member_id = d.member_id;
+              /*association - 주입 => y_room 으로 불러오기*/
+              let room_name = d.y_room.room_name;
+
+              rev.push({
+                start: moment(start).unix(), 
+                end: moment(end).unix(),
+                title: 1,
+                content: '<p>예약자: '+member_id+'</p>'+'<p>인원: '+ person +'</p>'+'<p>회의실: '+ room_name +'</p>',
+                category: member_id
+              });
+            }
+
+            //await: call process
+            await callAPI(res.data);
+
+            console.log("예약정보!"+rev);
+
+            drawCalendar(rev);
+          
+          }, 
+          error : function (err) {
+            console.log(err);
+          }
         });
-        $('#calendar').on('Calendar.daynote-mouseenter', function(event, instance, elem){
-          console.log('event : Calendar.daynote-mouseenter');
-          console.log(instance);
-          console.log(elem);
-        });
-        $('#calendar').on('Calendar.daynote-mouseleave', function(event, instance, elem){
-          console.log('event : Calendar.daynote-mouseleave');
-          console.log(instance);
-          console.log(elem);
-        });
-        $('#calendar').on('Calendar.event-mouseenter', function(event, instance, elem){
-          console.log('event : Calendar.event-mouseenter');
-          console.log(instance);
-          console.log(elem);
-        });
-        $('#calendar').on('Calendar.event-mouseleave', function(event, instance, elem){
-          console.log('event : Calendar.event-mouseleave');
-          console.log(instance);
-          console.log(elem);
-        });
-        $('#calendar').on('Calendar.daynote-click', function(event, instance, elem, evt){
-          console.log('event : Calendar.daynote-click');
-          console.log(instance);
-          console.log(elem);
-          console.log(evt);
-        });
-        $('#calendar').on('Calendar.event-click', function(event, instance, elem, evt){
-          console.log('event : Calendar.event-click');
-          console.log(instance);
-          console.log(elem);
-          console.log(evt);
-        });
-        }
+
       });
     </script>
     <div class="container-fluid px-4">

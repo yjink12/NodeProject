@@ -29,19 +29,19 @@
         </li>
         <li>
             <label>인원</label>
-            <input type="number" name="person_num" id="person_num" min="1" required>
+            <input type="number" name="person_num" id="person_num" min="1">
         </li>
         <li>
             <label>예약날짜</label>
-            <input type="date" name="reserve_date" id="reserve_date" required>
+            <input type="date" name="reserve_date" id="reserve_date">
         </li>
         <li>
             <label>시작시간</label>
-            <input type="time" name="start_time" id="start_time" required>
+            <input type="time" name="start_time" id="start_time">
         </li>
         <li>
             <label>종료시간</label>
-            <input type="time" name="end_time" id="end_time" required>
+            <input type="time" name="end_time" id="end_time" max="18:00:00">
         </li>
         <li>
             <input type="button" value="예약하기" id="send">
@@ -52,6 +52,7 @@
     
     <script>
         $(document).ready(function(){
+            /*input date 오늘 날짜부터 선택 가능*/
             let [today_date] = new Date().toISOString().split("T");
             console.log(today_date);
             document.getElementById("reserve_date").setAttribute("min", today_date);
@@ -63,10 +64,23 @@
                 if(hours < 24){
                     hours++;
                 }
-                $('#end_time').val(hours+':'+minutes);
+                let time = hours+':'+minutes;
+                console.log(time);
+                $('#end_time').val(time);
+            
+                $('#end_time').change(function(){
+                    let end_time = $('#end_time').val();
+                    console.log(end_time);
+                    if(end_time < time){
+                        alert('시간을 다시 확인해주세요. 이용 시간은 최소 1시간입니다');
+                        $('#end_time').val(time);
+                    }
+                });
+
             });
 
             $('#send').click(function(){
+
                 let room_no = $('.room').val();
                 let person_num = $('#person_num').val();
                 let reserve_date = $('#reserve_date').val();
@@ -75,9 +89,13 @@
                 let member_id = $('#email').val();
                 
                 reserve_date = (moment(reserve_date).format('YYYY-MM-DD') + ' 00:00:00');
-                
-                
-                $.ajax({
+                console.log(reserve_date);
+
+                if(start_time == "" || end_time == "" || person_num == "" || reserve_date.indexOf('Invalid') == 0 ){
+                    alert("모두 입력해주세요!");
+                    //location.reload();
+                }else {
+                    $.ajax({
                     url: '/reserve/add',
                     type: 'post',
                     data: {
@@ -94,11 +112,14 @@
 
                     },
                     error : function (err) {
-                        alert('이미 예약된 시간입니다. 다시 선택해주세요 :(');
-                        location.reload();
                         console.log(err);
+                        alert('이미 예약된 시간입니다. 다시 선택해주세요 :(');
+                       // location.reload();
+                        
                     }
                 });
+                }
+                
             });
         });
     </script>

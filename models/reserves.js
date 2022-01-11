@@ -8,24 +8,6 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement : true,
             comment : '예약번호'
         },
-        member_id : {
-            type : DataTypes.STRING(20),
-            allowNull : false,
-            references : {
-                model: 'y_member',
-                key: 'member_id'
-            },
-            comment : '회원아이디'
-        },
-        room_no : {
-            type : DataTypes.INTEGER,
-            allowNull : false,
-            references : {
-                model: 'y_room',
-                key: 'room_no'
-            },
-            comment : '회의실 번호'
-        },
         reserve_date : {
             type : DataTypes.DATE, 
             allowNull : false,
@@ -49,6 +31,19 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         tableName : 'y_reserve'
     });
+
+    Reserves.associate = function (models){
+        models.y_reserve.belongsTo(models.y_member, {
+            foreignKey : {
+                name : 'member_id',
+                allowNull : false
+            }  
+        });
+
+        models.y_reserve.belongsTo(models.y_room, {
+            foreignKey : 'room_no'
+        });
+    };
 
     return Reserves;
 }

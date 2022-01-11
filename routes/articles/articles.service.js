@@ -49,6 +49,7 @@ exports.show = async (req, res) => {
 //     res.status(200).json({result: 'success', data: rows});
 // }
 
+/*회의실 생성 */
 exports.createRoom = async (req, res) => {
     try{
         let rows = await models.y_room.create({
@@ -62,7 +63,7 @@ exports.createRoom = async (req, res) => {
 
     }
 }
-
+/*회의실 정보 */
 exports.showInfo = async (req, res) => {
     try{
         console.log(req.user.member_id);
@@ -74,7 +75,7 @@ exports.showInfo = async (req, res) => {
         res.status(500).json({result: false, message: "fail"})
     }
 }
-
+/*예약정보 확인 후 추가 */
 exports.reserveRoom = async (req, res) => {
     try{
         console.log(req.body.reserve_date);
@@ -106,21 +107,28 @@ exports.reserveRoom = async (req, res) => {
         }
 
     }catch(err){
+        console.log(err);
         res.status(500).json({result: false, message: "fail"})
     }
 }
-
+/*예약정보 보여주기 */
 exports.showReserveInfo = async (req, res) => {
     try{
-        //console.log(req.user.member_id);
-        let rows = await models.y_reserve.findAll();
+        //console.log('test=====>'+req.user.member_id);
+        let rows = await models.y_reserve.findAll({
+            include : {
+                model : models.y_room,
+                attributes : ['room_no','room_name'],
+            }
+        });
         
         res.status(200).json({result: 'success', data: rows});
     }catch(err){
+        console.log(err);
         res.status(500).json({result: false, message: "fail"})
     }
 }
-
+/*예약정보 삭제 */
 exports.delReserve = async (req, res) => {
     let rows = await models.y_reserve.destroy({
         where: {member_id : req.params.id}
